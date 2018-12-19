@@ -23,7 +23,7 @@ import DTO.test;
  */
 @WebServlet("/UploadServlet")
 public class UploadServlet extends HttpServlet {
-	private final String UPLOAD_DIRECTORY = "C:\\Users\\Dell7559\\eclipse-workspace\\UploadMultipleImagesEMD\\UploadMultipleImagesEMD\\WebContent\\Data";
+	private final String UPLOAD_DIRECTORY = "/UploadMultipleImagesEMD/WebContent/Data";
 	private static final long serialVersionUID = 1L;
        
     /**
