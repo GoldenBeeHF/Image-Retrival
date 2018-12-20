@@ -45,10 +45,9 @@ public class UploadServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	test t;
+	test computTest;
 	@SuppressWarnings({ "static-access", "null", "unchecked" })
 protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		if(ServletFileUpload.isMultipartContent(request)){
 			try{
 				List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
@@ -57,14 +56,11 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 						String name = new File(item.getName()).getName();
 						String url = UPLOAD_DIRECTORY + File.separator + name;
 						item.write(new File(url));
-						System.out.println(url);
-						 t = new test(url);
+						computTest = new test(url);
 					}
 				}
-				
 				request.setAttribute("listImage",t.getImage());
 				request.setAttribute("tile",t.tile);
-//				request.setAttribute("message", "File upload failed due to : " );
 			}
 			catch(Exception ex){
 				request.setAttribute("message", "File upload failed due to : " + ex);
