@@ -62,11 +62,11 @@ public class test {
         
         // Tính histogram ?nh truy?n vào
        
-        Mat anh = Imgcodecs.imread(url, Imgcodecs.CV_LOAD_IMAGE_COLOR);
-        int rw = anh.rows();
-        int cl = anh.cols();       
+        Mat qImage = Imgcodecs.imread(url, Imgcodecs.CV_LOAD_IMAGE_COLOR);
+        int rw_qImage = qImage.rows();
+        int cl_qImage = qImage.cols();       
         int r, c;
-        if (rw > cl) {
+        if (rw_qImage > cl_qImage) {
         	r = 12;
         	c = 8;
         }
@@ -75,8 +75,8 @@ public class test {
         	c = 12;
         }
         
-        List<double[]> lst = new ArrayList<double[]>();
-        double[] arrPercent = new double[r * c];
+        List<double[]> lstHist_qImage = new ArrayList<double[]>();
+        double[] arrPercentEachHist = new double[r * c];
         
         for (int i = 0; i < r; i++) {
         	for (int j = 0; j < c; j++) {        		
@@ -85,38 +85,28 @@ public class test {
 		        	arrCountA[m] = 0;
 		        }
 		        
-        		for (int k = i * rw / r; k < i * rw / r + rw / r; k++) {
-        			for (int l = j * cl / c; l < j * cl / c + cl / c; l++) {
-        				double minimum = distanceEuclide(anh.get(k, l), arrMPEG.get(0));	
-                		int vt = 0;
-                		
-                		for (int m = 1; m < arrSize; m++) {
-                			if (minimum > distanceEuclide(anh.get(k, l), arrMPEG.get(m))) {
-                				minimum = distanceEuclide(anh.get(k, l), arrMPEG.get(m));
-                				vt = m;
-                			}
-                		}
+        		for (int k = i * rw_qImage / r; k < i * rw_qImage / r + rw_qImage / r; k++) {
+        			for (int l = j * cl_qImage / c; l < j * cl_qImage / c + cl_qImage / c; l++) {
+        				
+        				int vt = findLocationMin(qImage, k, l, arrMPEG);
                 		arrCountA[vt]++; 		
         			}
         		}
         		
-        		int sum = 0;                
-                for (int n = 0; n < 25; n++) {
-                	sum += arrCountA[n]; 	
-                }
+        		int sum = sumArrayInteger(arrCountA);
                 
-                double percentImage1 = 0;
-                double[] vHist = new double[25];
+                double percentBin = 0;
+                double[] vHistBin = new double[25];
                 
                 for (int a = 0; a < 25; a++) {
-                	vHist[a] = (double)arrCountA[a] / sum * 100;
-                	if (vHist[a] < 10) {
-                		vHist[a] = 0;
+                	vHistBin[a] = (double)arrCountA[a] / sum * 100;
+                	if (vHistBin[a] < 10) {
+                		vHistBin[a] = 0;
                 	}
-                	percentImage1 += vHist[a];
+                	percentBin += vHistBin[a];
                 }
-                lst.add(vHist);
-                arrPercent[i * c + j % c] = percentImage1;
+                lstHist_qImage.add(vHistBin);
+                arrPercentEachHist[i * c + j % c] = percentBin;
         	}
         }	
         
@@ -129,7 +119,6 @@ public class test {
  	   	//Ð?c file histogram c?a b? ?nh
 	 	FileInputStream fs = null;
 		try {
-			//fs = new FileInputStream("C:\\Users\\Dell7559\\eclipse-workspace\\UploadMultipleImagesEMD\\UploadMultipleImagesEMD\\dataHistEuclide.bin");
 			fs = new FileInputStream("/UploadMultipleImagesEMD/dataHistEMD_Euclide_Bins_Hist.bin");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -240,28 +229,49 @@ public class test {
 		return this.lst;
 	}
 	
+	private static int sumArrayInteger(int[] a) {
+		int sum = 0;
+		for (int i = 0; i < a.length; i++) {
+        	sum += a[i]; 	
+        }	
+		return sum;
+	}
 	
-	public static double distanceEuclide(double[] a, double[] b) {
-		return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2) + Math.pow(a[2] - b[2], 2));
+	private static int findLocationMin(Mat qImage, int k, int l, List<double[]> arrMPEG) {
+		int arrSize = arrMPEG.size();
+		double minimum = distanceEuclide(qImage.get(k, l), arrMPEG.get(0));	
+		int vt = 0;
+		
+		for (int i = 1; i < arrSize; i++) {
+			if (minimum > distanceEuclide(qImage.get(k, l), arrMPEG.get(i))) {
+				minimum = distanceEuclide(qImage.get(k, l), arrMPEG.get(i));
+				vt = i;
+			}
+		}
+		return vt;
+	}
+	
+	/**
+	 * compute distance between 2 colors
+	 * @param colorA : color A
+	 * @param colorB : color B
+	 * @return distance between color A and B.
+	 */
+	public static double distanceEuclide(double[] colorA, double[] colorB) {
+		return Math.sqrt(Math.pow(colorA[0] - colorB[0], 2) + Math.pow(colorA[1] - colorB[1], 2) + Math.pow(colorA[2] - colorB[2], 2));
 	}	
 	
+	/**
+	 * compute distance between 2 vectors
+	 * @param a : vector histogram A
+	 * @param b : vector histogram B
+	 * @param MPEG7 : list color MPEG-7
+	 * @param percent : percent color of vector histogram A
+	 * @return distance between vector A and B
+	 */
 	public static double transportationProblem(double[] a, double[] b, List<double[]> MPEG7, double percent) {
 		double dis = 0;
 		int vt = 0;
-
-//		for (int i = 0; i < a.length; i++) {
-//			if (a[i] > b[i]) {
-//				a[i] -= b[i];
-//				b[i] = 0;
-//			}
-//			else if (a[i] < b[i]) {
-//				b[i] -= a[i];
-//				a[i] = 0;
-//			}
-//			else 
-//				a[i] = b[i] = 0;
-//		}
-	
 		for (int i = 0; i < a.length; i++) {
 			if (vt == 25) 
 				break;
@@ -293,13 +303,6 @@ public class test {
 				
 			}	
 		}
-		
-//		double modulePercent = 0;
-//		for (int i = 0; i < a.length; i++) {
-//			modulePercent += a[i];
-//		}
-//		
-//		return dis / percent + (modulePercent * 100);
 		return dis / percent;
 	}
 }
