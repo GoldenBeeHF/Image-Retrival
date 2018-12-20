@@ -23,7 +23,7 @@ import DTO.test;
  */
 @WebServlet("/UploadServlet")
 public class UploadServlet extends HttpServlet {
-	private final String UPLOAD_DIRECTORY = "C:\\Users\\Dell7559\\eclipse-workspace\\UploadMultipleImagesEMD\\UploadMultipleImagesEMD\\WebContent\\Data";
+	private final String UPLOAD_DIRECTORY = "/UploadMultipleImagesEMD/WebContent/Data";
 	private static final long serialVersionUID = 1L;
        
     /**
@@ -47,44 +47,31 @@ public class UploadServlet extends HttpServlet {
 	 */
 	test t;
 	@SuppressWarnings({ "static-access", "null", "unchecked" })
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		
-
-		
-		if(ServletFileUpload.isMultipartContent(request))
-		{
-			try
-			{
+		if(ServletFileUpload.isMultipartContent(request)){
+			try{
 				List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
-				for(FileItem item : multiparts)
-				{
-					if(!item.isFormField())
-					{
+				for(FileItem item : multiparts){
+					if(!item.isFormField()){
 						String name = new File(item.getName()).getName();
 						String url = UPLOAD_DIRECTORY + File.separator + name;
 						item.write(new File(url));
 						System.out.println(url);
 						 t = new test(url);
-						
-						
 					}
-					
 				}
 				
 				request.setAttribute("listImage",t.getImage());
 				request.setAttribute("tile",t.tile);
 //				request.setAttribute("message", "File upload failed due to : " );
 			}
-			catch(Exception ex)
-			{
+			catch(Exception ex){
 				request.setAttribute("message", "File upload failed due to : " + ex);
 			}
 		}
 		else
-		{
 			request.setAttribute("message", "Sorry this servlet only handles file upload request.");
-		}
 		request.getRequestDispatcher("/result.jsp").forward(request, response);
 	}
 

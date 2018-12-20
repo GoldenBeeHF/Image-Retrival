@@ -4,14 +4,13 @@ import java.util.ArrayList;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
-
-
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import DTO.ListImage;
 import DTO.Image;
+import DTO.Algorithm;
 public class test {
 	String url;
 	public String getUrl() {
@@ -29,7 +28,7 @@ public class test {
 	int dem;
 	ListImage lst = new ListImage();
 	public  ListImage getImage() throws IOException{ 
-		System.load("E:\\opencv\\build\\java\\x64\\" + Core.NATIVE_LIBRARY_NAME + ".dll");
+		System.load("F:\\OpenCV\\opencv\\build\\java\\x64\\" + Core.NATIVE_LIBRARY_NAME + ".dll");
 		
 		List<double[]> arrMPEG = new ArrayList<>();
 	       
@@ -60,13 +59,13 @@ public class test {
         arrMPEG.add(new double[] {255, 255, 255}); //White
         int arrSize = arrMPEG.size();
         
-        // Tính histogram ?nh truy?n vào
-       
-        Mat anh = Imgcodecs.imread(url, Imgcodecs.CV_LOAD_IMAGE_COLOR);
-        int rw = anh.rows();
-        int cl = anh.cols();       
+     // Compute Histogram image trainmision
+
+        Mat requery_Image = Imgcodecs.imread(url, Imgcodecs.CV_LOAD_IMAGE_COLOR);
+        int rw_num = requery_Image.rows();
+        int cl_num = requery_Image.cols();       
         int r, c;
-        if (rw > cl) {
+        if (rw_num > cl_num) {
         	r = 12;
         	c = 8;
         }
@@ -87,12 +86,13 @@ public class test {
 		        
         		for (int k = i * rw / r; k < i * rw / r + rw / r; k++) {
         			for (int l = j * cl / c; l < j * cl / c + cl / c; l++) {
-        				double minimum = distanceEuclide(anh.get(k, l), arrMPEG.get(0));	
+        				double minimum = Algorithm.distanceEuclide(requery_Image.get(k, l), arrMPEG.get(0));	
                 		int vt = 0;
                 		
                 		for (int m = 1; m < arrSize; m++) {
-                			if (minimum > distanceEuclide(anh.get(k, l), arrMPEG.get(m))) {
-                				minimum = distanceEuclide(anh.get(k, l), arrMPEG.get(m));
+                			if (minimum > Algorithm.distanceEuclide(requery_Image.get(k, l), arrMPEG.get(m))) {
+                				minimum = Algorithm.distanceEuclide(requery_Image.get(k, l), arrMPEG.get(m));
+                			
                 				vt = m;
                 			}
                 		}
@@ -122,21 +122,19 @@ public class test {
         
         String[] arr = new String[] { "peoples", "beach", "castle", "bus", "dinosaur", "elephant", "flower", "horse", "mountain", "meal" };
 	   	
-        //Tính kho?ng cách gi?a ?nh truy?n vào v?i các ?nh trong b? d? li?u  
+        //Compute distance between pixel from image  
         double[] histNum = new double[96 * 25 * 1000];
- 	   	int[] tenAnh = new int[1000];
+ 	   	int[] tenrequery_Image = new int[1000];
  	   
- 	   	//Ð?c file histogram c?a b? ?nh
+ 	   	//Read file date vector Historgram
 	 	FileInputStream fs = null;
 		try {
-			//fs = new FileInputStream("C:\\Users\\Dell7559\\eclipse-workspace\\UploadMultipleImagesEMD\\UploadMultipleImagesEMD\\dataHistEuclide.bin");
-			fs = new FileInputStream("C:\\Users\\Dell7559\\eclipse-workspace\\UploadMultipleImagesEMD\\UploadMultipleImagesEMD\\dataHistEMD_Euclide_Bins_Hist.bin");
+			fs = new FileInputStream("F:\\Studio\\eclipse-workspace\\UploadMultipleImagesEMD\\UploadMultipleImagesEMD\\dataHistEMD_Euclide_Bins_Hist.bin");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		DataInputStream ds = new DataInputStream(fs);
-		
 		for (int i = 0; i < 96 * 25 * 1000; i++) {
 			try {
 				histNum[i] = ds.readDouble();
@@ -147,10 +145,10 @@ public class test {
 		}
 		
 		for (int i = 0; i < 1000; i++) {
-			tenAnh[i] = i;
+			tenrequery_Image[i] = i;
 		}
 		
-		//Tính kho?ng cách
+		//Tính khoang cách
 		double[] arrDis = new double[1000];
 		for (int i = 0; i < arrDis.length; i++) {
 			arrDis[i] = 0;
@@ -169,7 +167,6 @@ public class test {
         		lstImg.add(arrHist);	
         	}
             for (int j = 0; j < lst.size(); j++) {
-            		
         		double percent = 0;
         		for (int k = 0; k < 25; k++) {
         			percent += lstImg.get(j)[k];
@@ -182,10 +179,10 @@ public class test {
             	}
         		
         		if (percent >= arrPercent[j]) {
-            		arrDis[a] += transportationProblem(arr1, c1, arrMPEG, arrPercent[j]);
+            		arrDis[a] += Algorithm.transportationProblem(arr1, c1, arrMPEG, arrPercent[j]);
             	}
             	else {
-            		arrDis[a] += transportationProblem(c1, arr1, arrMPEG, percent);
+            		arrDis[a] += Algorithm.transportationProblem(c1, arr1, arrMPEG, percent);
             	}
             }
         }
@@ -196,15 +193,15 @@ public class test {
         			double t = arrDis[j];
         			arrDis[j] = arrDis[i];
         			arrDis[i] = t;
-        			int t1 = tenAnh[j];
-        			tenAnh[j] = tenAnh[i];
-        			tenAnh[i] = t1;
+        			int t1 = tenrequery_Image[j];
+        			tenrequery_Image[j] = tenrequery_Image[i];
+        			tenrequery_Image[i] = t1;
         		}
         	}
         }
 
-        // ?nh g?c
-       int ten = tenAnh[0];
+        //Compute 
+       int ten = tenrequery_Image[0];
        if(ten<101)
     	   dem = 101;
        else if(ten < 200)
@@ -228,11 +225,11 @@ public class test {
     	   
         //Xu?t ?nh top 100
         for (int i = 0; i < 100; i++) {
-        	if(dem -100 <=tenAnh[i] && tenAnh[i]<= dem)
+        	if(dem -100 <=tenrequery_Image[i] && tenrequery_Image[i]<= dem)
         		tile++;
-			String url = "DBCOREL" + "/" + arr[tenAnh[i] / 100] + "/" + tenAnh[i] + ".jpg";
+			String url = "DBCOREL" + "/" + arr[tenrequery_Image[i] / 100] + "/" + tenrequery_Image[i] + ".jpg";
 			Image img = new Image();
-			img.idImage = tenAnh[i];
+			img.idImage = tenrequery_Image[i];
 			img.urlImage = url;
 			System.out.println(url);
 			this.lst.lstImage.add(img);
@@ -241,65 +238,65 @@ public class test {
 	}
 	
 	
-	public static double distanceEuclide(double[] a, double[] b) {
-		return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2) + Math.pow(a[2] - b[2], 2));
-	}	
+//	public static double Algorithm.distanceEuclide(double[] a, double[] b) {
+//		return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2) + Math.pow(a[2] - b[2], 2));
+//	}	
 	
-	public static double transportationProblem(double[] a, double[] b, List<double[]> MPEG7, double percent) {
-		double dis = 0;
-		int vt = 0;
-
+//	public static double Algorithm.transportationProblem(double[] a, double[] b, List<double[]> MPEG7, double percent) {
+//		double dis = 0;
+//		int vt = 0;
+//
+////		for (int i = 0; i < a.length; i++) {
+////			if (a[i] > b[i]) {
+////				a[i] -= b[i];
+////				b[i] = 0;
+////			}
+////			else if (a[i] < b[i]) {
+////				b[i] -= a[i];
+////				a[i] = 0;
+////			}
+////			else 
+////				a[i] = b[i] = 0;
+////		}
+//	
 //		for (int i = 0; i < a.length; i++) {
-//			if (a[i] > b[i]) {
-//				a[i] -= b[i];
-//				b[i] = 0;
-//			}
-//			else if (a[i] < b[i]) {
-//				b[i] -= a[i];
-//				a[i] = 0;
-//			}
-//			else 
-//				a[i] = b[i] = 0;
-//		}
-	
-		for (int i = 0; i < a.length; i++) {
-			if (vt == 25) 
-				break;
-
-			for (int j = vt; j < b.length; j++) {
-				if (a[i] == 0) {
-					vt = j;
-					break;
-				}
-				if (b[vt] == 0) {
-					vt = j + 1;
-					if (vt == 25) {
-						break;
-					}
-					continue;
-				}
-				
-				if (a[i] >= b[j]) {
-					dis += b[j] * distanceEuclide(MPEG7.get(i), MPEG7.get(j));
-					a[i] -= b[j];
-					b[j] = 0;
-				}
-				else {
-					dis += a[i] * distanceEuclide(MPEG7.get(i), MPEG7.get(j));
-					b[j] -= a[i];
-					a[i] = 0;
-					break;
-				}
-				
-			}	
-		}
-		
-//		double modulePercent = 0;
-//		for (int i = 0; i < a.length; i++) {
-//			modulePercent += a[i];
+//			if (vt == 25) 
+//				break;
+//
+//			for (int j = vt; j < b.length; j++) {
+//				if (a[i] == 0) {
+//					vt = j;
+//					break;
+//				}
+//				if (b[vt] == 0) {
+//					vt = j + 1;
+//					if (vt == 25) {
+//						break;
+//					}
+//					continue;
+//				}
+//				
+//				if (a[i] >= b[j]) {
+//					dis += b[j] * Algorithm.distanceEuclide(MPEG7.get(i), MPEG7.get(j));
+//					a[i] -= b[j];
+//					b[j] = 0;
+//				}
+//				else {
+//					dis += a[i] * Algorithm.distanceEuclide(MPEG7.get(i), MPEG7.get(j));
+//					b[j] -= a[i];
+//					a[i] = 0;
+//					break;
+//				}
+//				
+//			}	
 //		}
 //		
-//		return dis / percent + (modulePercent * 100);
-		return dis / percent;
-	}
+////		double modulePercent = 0;
+////		for (int i = 0; i < a.length; i++) {
+////			modulePercent += a[i];
+////		}
+////		
+////		return dis / percent + (modulePercent * 100);
+//		return dis / percent;
+//	}
 }

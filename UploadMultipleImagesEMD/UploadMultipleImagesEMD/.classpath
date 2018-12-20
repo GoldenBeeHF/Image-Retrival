@@ -12,5 +12,6 @@
 	<classpathentry kind="src" path="/ServletTutorial"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Open CV"/>
 	<classpathentry kind="lib" path="E:/Quang/install/Android Studio/apache-tomcat-8.5.31/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="F:/tomcat/lib/servlet-api.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
