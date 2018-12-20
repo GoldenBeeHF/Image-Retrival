@@ -61,9 +61,7 @@ public class test {
         arrMPEG.add(new double[] {255, 255, 255}); //White
         int arrSize = arrMPEG.size();
         
-
-        // Tính histogram ?nh truy?n vào
-       
+        // Compute vector histogram query image    
         Mat qImage = Imgcodecs.imread(url, Imgcodecs.CV_LOAD_IMAGE_COLOR);
         int rw_qImage = qImage.rows();
         int cl_qImage = qImage.cols();       
@@ -115,10 +113,10 @@ public class test {
         String[] arr = new String[] { "peoples", "beach", "castle", "bus", "dinosaur", "elephant", "flower", "horse", "mountain", "meal" };
 	   	
         //Compute distance between pixel from image  
-        double[] histNum = new double[96 * 25 * 1000];
+        double[] histData = new double[96 * 25 * 1000];
  	   	int[] tenrequery_Image = new int[1000];
  	   
- 	   	//Read file date vector Historgram
+ 	   	//Read file date vector histogram
 	 	FileInputStream fs = null;
 		try {
 			fs = new FileInputStream("/UploadMultipleImagesEMD/dataHistEMD_Euclide_Bins_Hist.bin");
@@ -129,7 +127,7 @@ public class test {
 		DataInputStream ds = new DataInputStream(fs);
 		for (int i = 0; i < 96 * 25 * 1000; i++) {
 			try {
-				histNum[i] = ds.readDouble();
+				histData[i] = ds.readDouble();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -153,10 +151,10 @@ public class test {
         	for (int i = 0; i < 96; i++) {            	
             	double[] arrHist = new double[25];
             	for (int k = 0; k < 25; k++) {
-        			arrHist[k] = histNum[dir];
+        			arrHist[k] = histData[dir];
         			dir++;
         		}
-        		lstImg.add(arrHist);	
+        		lstImg.add(arrHist);
         	}
             for (int j = 0; j < lstHist_qImage.size(); j++) {
         		double percent = 0;
@@ -215,7 +213,7 @@ public class test {
        else 
     	   dem = 1000;
     	   
-        //Xu?t ?nh top 100
+        //Get top 100
         for (int i = 0; i < 100; i++) {
         	if(dem -100 <=tenrequery_Image[i] && tenrequery_Image[i]<= dem)
         		tile++;
