@@ -129,7 +129,10 @@ public class test {
  	   	//Read file date vector Historgram
 	 	FileInputStream fs = null;
 		try {
-			fs = new FileInputStream("F:\\Studio\\eclipse-workspace\\UploadMultipleImagesEMD\\UploadMultipleImagesEMD\\dataHistEMD_Euclide_Bins_Hist.bin");
+// 			fs = new FileInputStream("F:\\Studio\\eclipse-workspace\\UploadMultipleImagesEMD\\UploadMultipleImagesEMD\\dataHistEMD_Euclide_Bins_Hist.bin");
+// =======
+			//fs = new FileInputStream("C:\\Users\\Dell7559\\eclipse-workspace\\UploadMultipleImagesEMD\\UploadMultipleImagesEMD\\dataHistEuclide.bin");
+			fs = new FileInputStream("/UploadMultipleImagesEMD/dataHistEMD_Euclide_Bins_Hist.bin");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
