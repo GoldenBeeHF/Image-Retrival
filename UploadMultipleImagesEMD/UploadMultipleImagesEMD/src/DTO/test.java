@@ -32,6 +32,8 @@ public class test {
 	public  ListImage getImage() throws IOException{ 
 		System.load("F:\\OpenCV\\opencv\\build\\java\\x64\\" + Core.NATIVE_LIBRARY_NAME + ".dll");
 		
+		final int AMOUNT_IMAGE = 1000;
+		
 		List<double[]> arrMPEG = new ArrayList<>();
 	       
         arrMPEG.add(new double[] {0, 0, 0}); //Black
@@ -83,7 +85,7 @@ public class test {
         for (int i = 0; i < r; i++) {
         	for (int j = 0; j < c; j++) {		
         		
-        		int[] arrCountA = new int[25];
+        		int[] arrCountA = new int[arrSize];
         		Arrays.fill(arrCountA, 0);
 
         		for (int k = i * rw_qImage / r; k < i * rw_qImage / r + rw_qImage / r; k++) {
@@ -94,7 +96,7 @@ public class test {
 		        		int sum = Algorithm.sumArrayInteger(arrCountA);
 		                
 		                double percentBin = 0;
-		                double[] vHistBin = new double[25];
+		                double[] vHistBin = new double[arrSize];
 		                
 		                for (int a = 0; a < 25; a++) {
 		                	vHistBin[a] = (double)arrCountA[a] / sum * 100;
@@ -110,11 +112,12 @@ public class test {
         	}
         }
         
+        //Name of folders in database
         String[] arr = new String[] { "peoples", "beach", "castle", "bus", "dinosaur", "elephant", "flower", "horse", "mountain", "meal" };
 	   	
         //Compute distance between pixel from image  
-        double[] histData = new double[96 * 25 * 1000];
- 	   	int[] tenrequery_Image = new int[1000];
+        double[] histData = new double[r * c * arrSize * AMOUNT_IMAGE];
+ 	   	int[] arrNameImage = new int[AMOUNT_IMAGE];
  	   
  	   	//Read file date vector histogram
 	 	FileInputStream fs = null;
@@ -125,7 +128,7 @@ public class test {
 			e.printStackTrace();
 		}
 		DataInputStream ds = new DataInputStream(fs);
-		for (int i = 0; i < 96 * 25 * 1000; i++) {
+		for (int i = 0; i < r * c * arrSize * AMOUNT_IMAGE; i++) {
 			try {
 				histData[i] = ds.readDouble();
 			} catch (IOException e) {
@@ -134,37 +137,36 @@ public class test {
 			}
 		}
 		
-		for (int i = 0; i < 1000; i++) {
-			tenrequery_Image[i] = i;
+		for (int i = 0; i < AMOUNT_IMAGE; i++) {
+			arrNameImage[i] = i;
 		}
 		
 		//Tính khoang cách
-		double[] arrDis = new double[1000];
-		for (int i = 0; i < arrDis.length; i++) {
-			arrDis[i] = 0;
-		}
-        double[] arr1 = new double[25];
-        double[] c1 = new double[25];
+		double[] arrDis = new double[AMOUNT_IMAGE];
+		Arrays.fill(arrDis, 0);
+
+        double[] arr1 = new double[arrSize];
+        double[] c1 = new double[arrSize];
         int dir = 0;
-        for (int a = 0; a < 1000; a++) {
-        	List<double[]> lstImg = new ArrayList<double[]>();
-        	for (int i = 0; i < 96; i++) {            	
-            	double[] arrHist = new double[25];
-            	for (int k = 0; k < 25; k++) {
+        for (int a = 0; a < AMOUNT_IMAGE; a++) {
+        	List<double[]> lstHistImg = new ArrayList<double[]>();
+        	for (int i = 0; i < r * c; i++) {            	
+            	double[] arrHist = new double[arrSize];
+            	for (int k = 0; k < arrSize; k++) {
         			arrHist[k] = histData[dir];
         			dir++;
         		}
-        		lstImg.add(arrHist);
+            	lstHistImg.add(arrHist);
         	}
             for (int j = 0; j < lstHist_qImage.size(); j++) {
         		double percent = 0;
-        		for (int k = 0; k < 25; k++) {
-        			percent += lstImg.get(j)[k];
+        		for (int k = 0; k < arrSize; k++) {
+        			percent += lstHistImg.get(j)[k];
         		}
-        		for (int k = 0; k < 25; k++) {
-            		arr1[k] = lstImg.get(j)[k];
+        		for (int k = 0; k < arrSize; k++) {
+            		arr1[k] = lstHistImg.get(j)[k];
             	}
-        		for (int k = 0; k < 25; k++) {
+        		for (int k = 0; k < arrSize; k++) {
             		c1[k] = lstHist_qImage.get(j)[k];
             	}
         		
@@ -177,21 +179,21 @@ public class test {
             }
         }
         
-        for(int i = 0; i < 1000 - 1; i++) {
-        	for (int j = i + 1; j < 1000; j++) {
+        for(int i = 0; i < AMOUNT_IMAGE - 1; i++) {
+        	for (int j = i + 1; j < AMOUNT_IMAGE; j++) {
         		if (arrDis[j] < arrDis[i]) {
         			double t = arrDis[j];
         			arrDis[j] = arrDis[i];
         			arrDis[i] = t;
-        			int t1 = tenrequery_Image[j];
-        			tenrequery_Image[j] = tenrequery_Image[i];
-        			tenrequery_Image[i] = t1;
+        			int t1 = arrNameImage[j];
+        			arrNameImage[j] = arrNameImage[i];
+        			arrNameImage[i] = t1;
         		}
         	}
         }
 
         //Compute 
-       int ten = tenrequery_Image[0];
+       int ten = arrNameImage[0];
        if(ten<101)
     	   dem = 101;
        else if(ten < 200)
@@ -215,13 +217,12 @@ public class test {
     	   
         //Get top 100
         for (int i = 0; i < 100; i++) {
-        	if(dem -100 <=tenrequery_Image[i] && tenrequery_Image[i]<= dem)
+        	if(dem -100 <= arrNameImage[i] && arrNameImage[i]<= dem)
         		tile++;
-			String url = "DBCOREL" + "/" + arr[tenrequery_Image[i] / 100] + "/" + tenrequery_Image[i] + ".jpg";
+			String url = "DBCOREL" + "/" + arr[arrNameImage[i] / 100] + "/" + arrNameImage[i] + ".jpg";
 			Image img = new Image();
-			img.idImage = tenrequery_Image[i];
+			img.idImage = arrNameImage[i];
 			img.urlImage = url;
-			System.out.println(url);
 			this.lst.lstImage.add(img);
         }
 		return this.lst;
