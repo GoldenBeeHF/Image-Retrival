@@ -1,2 +1,0 @@
-# Image-Retrival
-Image Retrival

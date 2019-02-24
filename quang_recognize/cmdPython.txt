@@ -1,0 +1,8 @@
+python detect.py \
+--shape-predictor=shape_predictor_68_face_landmarks.dat \
+--folder-train=C:\\Users\\Dell7559\\Desktop\\data \
+--dst-folder=C:\\Users\\Delll7559\\Desktop\\data
+
+python get_face_top_100.py \
+--shape_predictor=shape_predictor_68_face_landmarks.dat \
+--image=C:\\Users\\Dell7559\\Desktop\\data\\0.jpg
