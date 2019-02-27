@@ -16,9 +16,10 @@
             <h1 class="page-header">Result</h1>
         </div>
         <hr>
-        {% for image_name in image_names %}
+        <!-- class="col-lg-3 col-md-4 col-xs-6 thumb" -->
+        {% for i in range(0, 10) %}
         <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-            <a href="/infostudent/{{1}}"><img class="img-responsive" src=" {{url_for('send_image', filename=image_name)}}"></a>
+            <a href="/infostudent/{{1}}"><img class="img-responsive" width="200px" height="200px" src=" {{url_for('send_image', filename=image_names[i])}}"></a>
         </div>
         {% endfor %}
     </div>

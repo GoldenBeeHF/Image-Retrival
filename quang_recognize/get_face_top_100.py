@@ -48,16 +48,22 @@ def findTop100(image):
 			h = int(rect.bottom() - rect.top() + 40)
 			w = int(rect.right() - rect.left() + 40)
 			crop_img = img[t:t+h,l:l+w]
+			height, width = crop_img.shape[:2]
+
+			scaleW = 250. / width
+			print scaleW
+			scaleH = height * scaleW
+
 			try:
-				crop_img = cv2.resize(crop_img, (250, 250), interpolation = cv2.INTER_AREA)
+				crop_img = cv2.resize(crop_img, (250, int(scaleH)), interpolation = cv2.INTER_AREA)
 			except:
-				continue
+				continue      
 			gray_crop = cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
 			rects_crop = detector(gray_crop, 0)
 			for rect_crop in rects_crop:
 				shape_crop = predictor(gray_crop, rect_crop)
 				shape_crop = face_utils.shape_to_np(shape_crop)
-				cv2.rectangle(img, (rect.left(), rect.top()), (rect.right(), rect.bottom()), (0, 255, 0), 2)
+				# cv2.rectangle(img, (rect.left(), rect.top()), (rect.right(), rect.bottom()), (0, 255, 0), 2)
 				lstX = []
 				lstY = []
 				for (x, y) in shape_crop:
@@ -113,7 +119,6 @@ def findTop100(image):
 				loop = int(len(arr) / 42)
 				for i in range(loop):
 					lstImg.append(i)
-				font = cv2.FONT_HERSHEY_SIMPLEX
 				for j in range(loop):
 					dem = 0
 					for i in range(42):

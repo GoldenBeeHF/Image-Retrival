@@ -14,8 +14,6 @@ ap.add_argument("-p", "--shape-predictor", required=True,
     help="path to facial landmark predictor")
 ap.add_argument("-f", "--folder-train", required=True,
     help="path folder training")
-ap.add_argument("-dst", "--dst-folder", required=True,
-    help="path destination folder")
 
 args = vars(ap.parse_args())
 
@@ -24,8 +22,6 @@ video_capture = cv2.VideoCapture(0)
 print("[INFO] loading facial landmark predictor...")
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(args["shape_predictor"])
-dem = 0
-dstFolder = args["dst_folder"]
 
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(args["shape_predictor"])
@@ -61,18 +57,27 @@ for i in range(len(arrLocation)):
 		# array
         shape = predictor(gray, rect)
         shape = face_utils.shape_to_np(shape)
+        for (x, y) in shape:
+            cv2.circle(img, (x, y), 1, (0, 0, 255), -1)
         l = int(rect.left() - 20)
         t = int(rect.top() - 20)
         h = int(rect.bottom() - rect.top() + 40)
         w = int(rect.right() - rect.left() + 40)
         crop_img = img[t:t+h,l:l+w]
-        try:
-            crop_img = cv2.resize(crop_img, (250, 250), interpolation = cv2.INTER_AREA)
-        except:
-            continue
+        height, width = crop_img.shape[:2]
 
+        scaleW = 250. / width
+        print scaleW
+        scaleH = height * scaleW
+
+        try:
+            crop_img = cv2.resize(crop_img, (250, int(scaleH)), interpolation = cv2.INTER_AREA)
+        except:
+            continue      
+        
         gray_crop = cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
         rects_crop = detector(gray_crop, 0)
+        
         for rect_crop in rects_crop:
             shape_crop = predictor(gray_crop, rect_crop)
             shape_crop = face_utils.shape_to_np(shape_crop)
@@ -80,6 +85,7 @@ for i in range(len(arrLocation)):
             lstX = []
             lstY = []
             for (x, y) in shape_crop:
+                # cv2.circle(crop_img, (x, y), 1, (0, 0, 255), -1)
                 lstX.append(x)
                 lstY.append(y)
 
@@ -126,9 +132,12 @@ for i in range(len(arrLocation)):
             vector.append(computeEuclide(lstX[13], lstX[54], lstY[13], lstY[54]))
             vector.append(computeEuclide(lstX[3], lstX[7], lstY[3], lstY[7]))
             vector.append(computeEuclide(lstX[9], lstX[13], lstY[9], lstY[13]))
-            for i in range(0, len(vector)):
-                f1.write(str(vector[i]) + ' ') 
-    # cv2.imshow("img", img)
-    # cv2.waitKey(0)
+            for j in range(0, len(vector)):
+                f1.write(str(vector[j]) + ' ')
+
+        cv2.imwrite("C:\\Users\\Dell7559\\Desktop\\dataDetect\\" + str(i) + ".jpg", crop_img) 
+        # cv2.imshow("img", crop_img)
+
+cv2.waitKey(0)
 
 

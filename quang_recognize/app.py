@@ -43,15 +43,20 @@ def upload():
         print ("Accept incoming file:", filename)
         print ("Save it to:", destination)
         upload.save(destination)
+        lstImg = findTop100(destination)
+        image_names = []
+        for image in lstImg:
+            image_names.append(str(image) + ".jpg")
+        
 
     # return send_from_directory("images", filename, as_attachment=True)
     #return render_template("complete.html", image_name=filename)
-    image_names = os.listdir('./images')
+    # image_names = os.listdir('./images')
     return render_template("gallery.html", image_names=image_names)
 
 @app.route('/upload/<filename>')
 def send_image(filename):
-    return send_from_directory("images", filename)
+    return send_from_directory("data", filename)
 
 @app.route('/infostudent/<index>', methods=['GET','POST'])
 def result(index):
