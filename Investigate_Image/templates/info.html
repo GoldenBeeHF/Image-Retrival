@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <style>
+        body {
+            font-size: 15px;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Mã số sinh viên:</label>
+        <div class="col-sm-3">
+            <label>{{sv.getMaHSSV()}}</label>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Họ tên:</label>
+        <div class="col-sm-4">
+            <label>{{sv.getHoDem()}}  {{sv.getTen()}}</label>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Giới tính:</label>
+        <div class="col-sm-4">
+            <label>{{sv.getGioiTinh()}}</label>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Ngày sinh:</label>
+        <div class="col-sm-4">
+            <label>{{sv.getNgaySinh()}}</label>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-4 col-form-label">Khóa học:</label>
+        <div class="col-sm-4">
+            <label>{{sv.getKhoaHoc()}}</label>
+        </div>
+    </div>
+</div>
+</body>
+</html>
