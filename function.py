@@ -72,6 +72,7 @@ def findNodeById(idNode, lstNode, lstLeaf, root):
     for node in lstLeaf:
         if int(idNode) == int(node.id):
             return node
+    return None
 
 # Tìm vị trí khoảng cách nhỏ nhất
 # vector: vector truyền vào

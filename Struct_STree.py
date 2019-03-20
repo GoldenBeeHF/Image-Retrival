@@ -25,14 +25,21 @@
 import struct
 import random
 import function
+import os
 lst = []
-for i in range(0, 60):
+for i in range(0, 1000):
     vector = [
-        random.randint(1, 10), 
-        random.randint(1, 10), 
-        random.randint(1, 10), 
-        random.randint(1, 10), 
-        random.randint(1, 10)
+
+        random.random() * 100,
+        random.random() * 100,
+        random.random() * 100,
+        random.random() * 100,
+        random.random() * 100
+        # random.randint(1, 100), 
+        # random.randint(1, 100), 
+        # random.randint(1, 100), 
+        # random.randint(1, 100), 
+        # random.randint(1, 100)
     ]
     
     a = struct.HOG(vector, i)
@@ -47,9 +54,35 @@ for image in lst:
 print "Root"
 for v in tree.root.lstVector:
     print v.getLink(), v.getVector()
+for node in tree.lstNode:
+    print "Node", node.id
+    for v in node.lstVector:
+        print v.getLink(), v.getVector()
 
-for leaf in tree.lstLeaf:
-    print "Cluster", leaf.id
-    for image in leaf.lstImage:
-        print image.getId(), image.getVector()
-    print function.computeAvgVector(leaf.lstImage)
+def makeDirInNode(curDir, node, tree):
+    if node == tree.root:
+        os.makedirs("Root")
+        curDir = "Root"
+    if node.__class__.__name__ == "Node":
+        os.makedirs(curDir + "/" + "Node_id_" + str(node.id))
+        curDir = curDir + "/" + "Node_id_" + str(node.id)
+        for v in node.lstVector:
+            if not os.path.exists(curDir + "/" + "Vector_link_" + str(v.getLink())):
+                os.makedirs(curDir + "/" + "Vector_link_" + str(v.getLink()))
+            node = function.findNodeById(v.getLink(), tree.lstLeaf, tree.lstNode, tree.root)
+            makeDirInNode(curDir + "/" + "Vector_link_" + str(v.getLink()), node, tree)
+    else:
+        os.makedirs(curDir + "/" + "Leaf_id_" + str(node.id))
+        curDir = curDir + "/" + "Leaf_id_" + str(node.id)
+        for v in node.lstImage:
+            if not os.path.exists(curDir + "/" + "Image_id_" + str(v.getId())):
+                os.makedirs(curDir + "/" + "Image_id_" + str(v.getId()))
+
+
+countRoot = 1
+makeDirInNode("", tree.root, tree)
+
+
+
+        
+

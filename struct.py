@@ -92,16 +92,30 @@ class STree:
                 lstLink.append(t.id)
             vt = function.findLeaf(t.id, self.lstLeaf)
             self.lstLeaf[int(vt)].add(image)
-            tempNode = t
             count = 1
+
             while True:
-                node = function.findNodeById(lstLink.index(len(lstLink) - count), self.lstNode, self.lstLeaf, self.root)
-                node.lstVector[int(lstVtLink[len(lstVtLink) - count])].setVector(function.computeAvgVector(tempNode.lstVector))
+                node = function.findNodeById(lstLink[len(lstLink) - count], self.lstNode, self.lstLeaf, self.root)
+                node.lstVector[int(lstVtLink[len(lstVtLink) - count])].setVector(function.computeAvgVector(node.lstVector))
                 count = count + 1
                 tempNode = node
+                if node == self.root:
+                    break
 
             if self.lstLeaf[int(vt)].n == self.m:
                 self.cutLeaf(self.lstLeaf[int(vt)], lstLink, lstVtLink)
+                lstLink.reverse()
+                lstVtLink.reverse()
+                for i in range(0, len(lstLink)):
+                    node = function.findNodeById(lstLink[i], self.lstNode, self.lstLeaf, self.root)
+                    if node.n < self.m:
+                        break
+                    else:
+                        if (node == self.root):
+                            self.cutRoot()
+                        else:
+                            self.cutNode(node, lstLink[i + 1], lstVtLink[i + 1])
+
     
     def cutRoot(self):
         if self.root.__class__.__name__ == "Leaf":
@@ -133,6 +147,35 @@ class STree:
             self.countId = self.countId + 1
             self.root.add(function.computeAvgVector(clusterB.lstImage, clusterB.id))
             self.countId = self.countId + 1
+        else:
+            cluster = function.findMaxDistance(self.root.lstVector)
+            clusterA = Node(self.countId)
+            self.countId = self.countId + 1
+            clusterA.add(cluster[0])
+            clusterB = Node(self.countId)
+            self.countId = self.countId + 1
+            clusterB.add(cluster[1])
+            self.lstNode.append(clusterA)
+            self.lstNode.append(clusterB)
+
+            for v in self.root.lstVector:
+                if (int(v.getLink()) == int(cluster[0].getLink())):
+                    continue
+                if (int(v.getLink()) == int(cluster[1].getLink())):
+                    continue
+
+                if (function.computeDistanceEuclide(v.getVector(), cluster[0].getVector())
+                    < function.computeDistanceEuclide(v.getVector(), cluster[1].getVector())):
+                    clusterA.add(v)
+                else:
+                    clusterB.add(v)
+
+            t = Node(self.root.id)
+            self.root = t
+            self.root.add(function.computeAvgVector(clusterA.lstVector, clusterA.id))
+            self.countId = self.countId + 1
+            self.root.add(function.computeAvgVector(clusterB.lstVector, clusterB.id))
+            self.countId = self.countId + 1
 
     def cutNode(self, node, nodeLink, vtNodeLink):
         cluster = function.findMaxDistance(node.lstVector)
@@ -144,6 +187,7 @@ class STree:
         clusterB.add(cluster[1])
         self.lstNode.append(clusterA)
         self.lstNode.append(clusterB)
+        self.lstNode.remove(node)
         for v in node.lstVector:
             if (int(v.getLink()) == int(cluster[0].getLink())):
                 continue
@@ -159,10 +203,6 @@ class STree:
         node.lstVector.remove(node.lstVector[vtNodeLink])
         node.add(function.computeAvgVector(clusterA.lstVector, clusterA.id))
         node.add(function.computeAvgVector(clusterB.lstVector, clusterB.id))
-        if node == self.root:
-            return
-        if node.n >= self.m:
-            cutNode(node, nodeLink)
 
     def cutLeaf(self, leaf, lstLink, lstVtLink):
         cluster = function.findMaxDistance(leaf.lstImage)
@@ -187,15 +227,8 @@ class STree:
                 clusterB.add(hog)
 
         count = 1
-        node = function.findNodeById(lstLink.index(len(lstLink) - count), self.lstNode, self.lstLeaf, self.root)
-        if node == None:
-            return
+        node = function.findNodeById(lstLink[len(lstLink) - count], self.lstNode, self.lstLeaf, self.root)
         node.lstVector.remove(node.lstVector[int(lstVtLink[len(lstVtLink) - count])])
         node.add(function.computeAvgVector(clusterA.lstImage, clusterA.id))
         node.add(function.computeAvgVector(clusterB.lstImage, clusterB.id))
         self.lstLeaf.remove(leaf)
-        count = count + 1
-        if node.n >= self.m:
-            self.cutNode(node, lstLink.index(len(lstLink) - count), lstVtLink[len(lstVtLink) - count])
-        if node == self.root:
-            return
