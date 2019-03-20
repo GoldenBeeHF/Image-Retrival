@@ -1,5 +1,6 @@
 class SinhVien:
     # filed
+	STT             = 1
 	MaHSSV          = 2001160163 
 	HoDem           = "Capit\xe1n\n"
 	Ten             = "Capit\xe1n\n"
@@ -35,8 +36,17 @@ class SinhVien:
 	DienThoai       = "0974112161"
 	Email           = "daulaudoan@gmail.com"
 	TrangThai       = "Capit\xe1n\n"
-    #method
-	
+	Img             = " "
+    
+	#method
+	def setSTT(self, STT):
+		self.STT = int(STT) - 1
+	def getSTT(self):
+		return self.STT
+	def setImg(self, Img):
+		self.Img = Img
+	def getImg(self):
+		return self.Img
 	def setMaHSSV(self, MaHSSV):
 		self.MaHSSV = MaHSSV
 	def getMaHSSV(self):
@@ -62,7 +72,10 @@ class SinhVien:
 	def getNgaySinh(self):
 		return self.NgaySinh
 	def setNoiSinh(self, NoiSinh):
-		self.NoiSinh = NoiSinh
+		if NoiSinh is None:
+			self.NoiSinh = NoiSinh
+		else:
+			self.NoiSinh = "Not Found"
 	def getNoiSinh(self):
 		return self.NoiSinh
 	def setNguyenQuan(self, NguyenQuan):
@@ -125,3 +138,15 @@ class SinhVien:
 		self.TrangThai = TrangThai
 	def getTrangThai(self):
 		return self.TrangThai
+	def setKhuVuc(self, KhuVuc):
+		self.KhuVuc = KhuVuc
+	def getKhuVuc(self):
+		return self.KhuVuc
+	def setKhuVuc(self, KhuVuc):
+		self.KhuVuc = KhuVuc
+	def getKhuVuc(self):
+		return self.KhuVuc
+	def setTenPhanHe(self, TenPhanHe):
+		self.TenPhanHe = TenPhanHe
+	def getTenPhanHe(self):
+		return self.TenPhanHe	

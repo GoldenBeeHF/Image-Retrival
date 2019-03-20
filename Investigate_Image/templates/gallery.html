@@ -5,11 +5,7 @@
     <title>Title</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
           integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <style>
-        .margin_top {
-            margin-top: 50px;
-        }
-    </style>
+          <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
 <div class="container">
@@ -22,8 +18,8 @@
         <hr>
         <!-- class="col-lg-3 col-md-4 col-xs-6 thumb" -->
         {% for i in range(0, 10) %}
-        <div class="col-lg-3 col-md-4 col-xs-6 thumb margin_top">
-            <a href="/infostudent/{{i}}"><img class="img-responsive" width="200px" height="200px" src=" {{url_for('send_image', filename=image_names[i])}}"></a>
+        <div class="col-md-4">
+            <a href="/infostudent/{{i}}"><img class="img-thumbnail gallery" src=" {{url_for('send_image', filename=image_names[i])}}"></a>
         </div>
         {% endfor %}
     </div>

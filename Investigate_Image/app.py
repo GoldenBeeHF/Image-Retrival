@@ -45,8 +45,9 @@ def upload():
         upload.save(destination)
         lstImg = findTop100(destination)
         image_names = []
-        for image in lstImg:
-            image_names.append(str(image) + ".jpg")
+        for i in range(0, len(lstImg) -1):
+            image_names.append(str(lstImg[i]) + ".jpg")
+            sinhviens[i].setImg(image_names[i])
         
 
     # return send_from_directory("images", filename, as_attachment=True)
