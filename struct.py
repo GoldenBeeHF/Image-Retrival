@@ -72,8 +72,10 @@ class STree:
     def addRoot(self, root):
         self.root = root
 
+    # thêm hình ảnh vào cây
     def addImage(self, image):
-        if (self.root.n == self.m):
+        # cut root if n >= m
+        if (self.root.n >= self.m):
             self.cutRoot()
         if (self.root.__class__.__name__ == "Leaf"):
                 self.root.add(image)
@@ -84,16 +86,22 @@ class STree:
             lstVtLink = []
             lstLink.append(t.id)
             while True:
+                # tìm vị trí khoảng cách nhỏ nhất
                 direct = function.findMinDistance(tempVector, t.lstVector)
+                # thêm vị trí vào danh sách tạm để quay lui sau khi thêm hình
                 lstVtLink.append(direct)
+                # tìm node link tới dựa vào vị trí vector có khoảng cách gần với vector ảnh truyền vào nhất
                 t = function.findNode(t.lstVector[direct], self.lstNode, self.lstLeaf)
                 if t.__class__.__name__ == "Leaf":
                     break
                 lstLink.append(t.id)
+
+            # thêm ảnh vào lá link tới
             vt = function.findLeaf(t.id, self.lstLeaf)
             self.lstLeaf[int(vt)].add(image)
             count = 1
 
+            # tính toán lại vector trung bình
             while True:
                 node = function.findNodeById(lstLink[len(lstLink) - count], self.lstNode, self.lstLeaf, self.root)
                 node.lstVector[int(lstVtLink[len(lstVtLink) - count])].setVector(function.computeAvgVector(node.lstVector))
@@ -102,6 +110,7 @@ class STree:
                 if node == self.root:
                     break
 
+            # kiểm tra số lượng phần tử sau khi thêm hình để tách lá
             if self.lstLeaf[int(vt)].n == self.m:
                 self.cutLeaf(self.lstLeaf[int(vt)], lstLink, lstVtLink)
                 lstLink.reverse()
@@ -116,9 +125,10 @@ class STree:
                         else:
                             self.cutNode(node, lstLink[i + 1], lstVtLink[i + 1])
 
-    
+    # cắt nút root
     def cutRoot(self):
         if self.root.__class__.__name__ == "Leaf":
+            # Tìm 2 vector có khoảng cách lớn nhất tạo thành 2 cụm
             cluster = function.findMaxDistance(self.root.lstImage)
             clusterA = Leaf(self.countId)
             self.countId = self.countId + 1
@@ -129,6 +139,7 @@ class STree:
             self.lstLeaf.append(clusterA)
             self.lstLeaf.append(clusterB)
 
+            # Đưa các vector vào 2 cụm vừa tạo
             for hog in self.root.lstImage:
                 if (int(hog.getId()) == int(cluster[0].getId())):
                     continue
@@ -140,14 +151,16 @@ class STree:
                     clusterA.add(hog)
                 else:
                     clusterB.add(hog)
+
+            # thay thế nút root mới
             t = Node(self.root.id)
             self.root = t
-
             self.root.add(function.computeAvgVector(clusterA.lstImage, clusterA.id))
             self.countId = self.countId + 1
             self.root.add(function.computeAvgVector(clusterB.lstImage, clusterB.id))
             self.countId = self.countId + 1
         else:
+            # Tìm 2 vector có khoảng cách lớn nhất tạo thành 2 cụm
             cluster = function.findMaxDistance(self.root.lstVector)
             clusterA = Node(self.countId)
             self.countId = self.countId + 1
@@ -157,7 +170,8 @@ class STree:
             clusterB.add(cluster[1])
             self.lstNode.append(clusterA)
             self.lstNode.append(clusterB)
-
+            
+            # Đưa các vector vào 2 cụm vừa tạo
             for v in self.root.lstVector:
                 if (int(v.getLink()) == int(cluster[0].getLink())):
                     continue
@@ -170,6 +184,7 @@ class STree:
                 else:
                     clusterB.add(v)
 
+            # thay thế nút root mới
             t = Node(self.root.id)
             self.root = t
             self.root.add(function.computeAvgVector(clusterA.lstVector, clusterA.id))
@@ -177,7 +192,9 @@ class STree:
             self.root.add(function.computeAvgVector(clusterB.lstVector, clusterB.id))
             self.countId = self.countId + 1
 
+    # Cắt nút Node
     def cutNode(self, node, nodeLink, vtNodeLink):
+        # Tìm 2 vector có khoảng cách lớn nhất tạo thành 2 cụm
         cluster = function.findMaxDistance(node.lstVector)
         clusterA = Node(self.countId)
         self.countId = self.countId + 1
@@ -188,6 +205,8 @@ class STree:
         self.lstNode.append(clusterA)
         self.lstNode.append(clusterB)
         self.lstNode.remove(node)
+
+        # Đưa các vector vào 2 cụm vừa tạo
         for v in node.lstVector:
             if (int(v.getLink()) == int(cluster[0].getLink())):
                 continue
@@ -199,12 +218,16 @@ class STree:
                 clusterA.add(v)
             else:
                 clusterB.add(v)
+        
+        # thay thế vector ở nút link tới bằng 2 vector khác dựa vào 2 cụm vừa tạo
         node = function.findNodeById(nodeLink, self.lstNode, self.lstLeaf, self.root)
         node.lstVector.remove(node.lstVector[vtNodeLink])
         node.add(function.computeAvgVector(clusterA.lstVector, clusterA.id))
         node.add(function.computeAvgVector(clusterB.lstVector, clusterB.id))
 
+    # Cắt nút Leaf
     def cutLeaf(self, leaf, lstLink, lstVtLink):
+        # Tìm 2 vector có khoảng cách lớn nhất tạo thành 2 cụm
         cluster = function.findMaxDistance(leaf.lstImage)
         clusterA = Leaf(self.countId)
         self.countId = self.countId + 1
@@ -214,6 +237,8 @@ class STree:
         clusterB.add(cluster[1])
         self.lstLeaf.append(clusterA)
         self.lstLeaf.append(clusterB)
+
+        # Đưa các vector vào 2 cụm vừa tạo
         for hog in leaf.lstImage:
             if (int(hog.getId()) == int(cluster[0].getId())):
                 continue
@@ -226,9 +251,10 @@ class STree:
             else:
                 clusterB.add(hog)
 
+        # thay thế vector ở nút link tới bằng 2 vector khác dựa vào 2 cụm vừa tạo
         count = 1
         node = function.findNodeById(lstLink[len(lstLink) - count], self.lstNode, self.lstLeaf, self.root)
         node.lstVector.remove(node.lstVector[int(lstVtLink[len(lstVtLink) - count])])
         node.add(function.computeAvgVector(clusterA.lstImage, clusterA.id))
         node.add(function.computeAvgVector(clusterB.lstImage, clusterB.id))
-        self.lstLeaf.remove(leaf)
+        self.lstLeaf.remove(leaf) # Xóa nút lá cũ
