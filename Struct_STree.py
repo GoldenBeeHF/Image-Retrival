@@ -29,17 +29,11 @@ import os
 lst = []
 for i in range(0, 1000):
     vector = [
-
         random.random() * 100,
         random.random() * 100,
         random.random() * 100,
         random.random() * 100,
         random.random() * 100
-        # random.randint(1, 100), 
-        # random.randint(1, 100), 
-        # random.randint(1, 100), 
-        # random.randint(1, 100), 
-        # random.randint(1, 100)
     ]
     
     a = struct.HOG(vector, i)
@@ -78,10 +72,37 @@ def makeDirInNode(curDir, node, tree):
             if not os.path.exists(curDir + "/" + "Image_id_" + str(v.getId())):
                 os.makedirs(curDir + "/" + "Image_id_" + str(v.getId()))
 
+# makeDirInNode("", tree.root, tree)
 
-countRoot = 1
-makeDirInNode("", tree.root, tree)
+f = open("root.txt", "wb")
+for v in tree.root.lstVector:
+    f.write(str(v.getLink()) + " ")
+    for value in v.getVector():
+        f.write(str(value) + " ")
+    f.write('\n')
 
+f.close()
+os.makedirs('Node')
+for node in tree.lstNode:
+    f1 = open('Node/' + str(node.id) + '.txt', 'wb')
+    f1.write('Node\n')
+    for v in node.lstVector:
+        f1.write(str(v.getLink()) + ' ')
+        for value in v.getVector():
+            f1.write(str(value) + ' ')
+        f1.write('\n')
+    f1.close()
+
+os.makedirs('Leaf')
+for leaf in tree.lstLeaf:
+    f2 = open('Leaf/' + str(leaf.id) + '.txt', 'wb')
+    f2.write('Leaf\n')
+    for v in leaf.lstImage:
+        f2.write(str(v.getId()) + ' ')
+        for value in v.getVector():
+            f2.write(str(value) + ' ')
+        f2.write('\n')
+    f2.close()
 
 
         
