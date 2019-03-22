@@ -72,7 +72,7 @@ def makeDirInNode(curDir, node, tree):
             if not os.path.exists(curDir + "/" + "Image_id_" + str(v.getId())):
                 os.makedirs(curDir + "/" + "Image_id_" + str(v.getId()))
 
-# makeDirInNode("", tree.root, tree)
+makeDirInNode("", tree.root, tree)
 
 f = open("root.txt", "wb")
 for v in tree.root.lstVector:
