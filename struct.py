@@ -54,16 +54,13 @@ class Node:
         self.lstVector.append(vector)
         self.n = self.n + 1
 
-    def setLink(self, link):
-        self.link = link
-
 # Cấu trúc cây STree:
 # + root: nút gốc
 # + lstLeaf: danh sách các nút lá
 # + lstNode: danh sách các nút không phải lá và root trong cây
 class STree:
     def __init__(self):
-        self.m = 20
+        self.m = 50
         self.countId = 0
         self.root = None
         self.lstLeaf = []
@@ -100,15 +97,16 @@ class STree:
             vt = function.findLeaf(t.id, self.lstLeaf)
             self.lstLeaf[int(vt)].add(image)
             count = 1
-
+            tNode = self.lstLeaf[int(vt)]
             # tính toán lại vector trung bình
             while True:
                 node = function.findNodeById(lstLink[len(lstLink) - count], self.lstNode, self.lstLeaf, self.root)
-                node.lstVector[int(lstVtLink[len(lstVtLink) - count])].setVector(function.computeAvgVector(node.lstVector))
+                print node.id
+                node.lstVector[int(lstVtLink[len(lstVtLink) - count])].setVector(function.computeAvgVector(tNode.lstImage))
                 count = count + 1
-                tempNode = node
                 if node == self.root:
                     break
+                node = tNode
 
             # kiểm tra số lượng phần tử sau khi thêm hình để tách lá
             if self.lstLeaf[int(vt)].n == self.m:
@@ -122,8 +120,19 @@ class STree:
                     else:
                         if (node == self.root):
                             self.cutRoot()
+                            return
                         else:
-                            self.cutNode(node, lstLink[i + 1], lstVtLink[i + 1])
+                            temp = self.cutNode(node, lstLink[i + 1], lstVtLink[i + 1])
+                            if temp == self.root:
+                                return
+                            c = 2
+                            while True:
+                                tempNode = function.findNodeById(lstLink[i + c], self.lstNode, self.lstLeaf, self.root)
+                                tempNode.lstVector[int(lstVtLink[i + c])].setVector(function.computeAvgVector(temp.lstVector))
+                                c = c + 1
+                                if tempNode == self.root:
+                                    break
+                                temp = tempNode
 
     # cắt nút root
     def cutRoot(self):
@@ -183,7 +192,8 @@ class STree:
                     clusterA.add(v)
                 else:
                     clusterB.add(v)
-
+            
+            
             # thay thế nút root mới
             t = Node(self.root.id)
             self.root = t
@@ -224,6 +234,8 @@ class STree:
         node.lstVector.remove(node.lstVector[vtNodeLink])
         node.add(function.computeAvgVector(clusterA.lstVector, clusterA.id))
         node.add(function.computeAvgVector(clusterB.lstVector, clusterB.id))
+        node.n = node.n - 1
+        return node
 
     # Cắt nút Leaf
     def cutLeaf(self, leaf, lstLink, lstVtLink):
@@ -257,4 +269,18 @@ class STree:
         node.lstVector.remove(node.lstVector[int(lstVtLink[len(lstVtLink) - count])])
         node.add(function.computeAvgVector(clusterA.lstImage, clusterA.id))
         node.add(function.computeAvgVector(clusterB.lstImage, clusterB.id))
+        
+        node.n = node.n - 1
         self.lstLeaf.remove(leaf) # Xóa nút lá cũ
+        if node == self.root:
+            return
+
+        count = count + 1
+        # tính toán lại vector trung bình
+        while True:
+            tempNode = function.findNodeById(lstLink[len(lstLink) - count], self.lstNode, self.lstLeaf, self.root)
+            tempNode.lstVector[int(lstVtLink[len(lstVtLink) - count])].setVector(function.computeAvgVector(node.lstVector))
+            count = count + 1
+            if tempNode == self.root:
+                break
+            node = tempNode

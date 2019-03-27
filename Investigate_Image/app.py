@@ -8,7 +8,7 @@ from readXML import readXML
 
 from student import SinhVien
 
-from get_face_top_100 import findTop100
+from get_face_top_100 import findTop100, findImageInTree
 
 sinhviens = []
 
@@ -43,17 +43,16 @@ def upload():
         print ("Accept incoming file:", filename)
         print ("Save it to:", destination)
         upload.save(destination)
-        lstImg = findTop100(destination)
+        lstImg = findImageInTree(destination)
         image_names = []
-        for i in range(0, len(lstImg) -1):
-            image_names.append(str(lstImg[i]) + ".jpg")
-            sinhviens[i].setImg(image_names[i])
-        
+        for image in lstImg:
+            image_names.append(str(image) + ".jpg")
+        amount = len(lstImg)
 
     # return send_from_directory("images", filename, as_attachment=True)
     #return render_template("complete.html", image_name=filename)
     # image_names = os.listdir('./images')
-    return render_template("gallery.html", image_names=image_names)
+    return render_template("gallery.html", image_names=image_names, amount=amount)
 
 @app.route('/upload/<filename>')
 def send_image(filename):
@@ -61,6 +60,7 @@ def send_image(filename):
 
 @app.route('/infostudent/<index>', methods=['GET','POST'])
 def result(index):
+    index = index.split('.')[0]
     sv = sinhviens[int(index)]
     return render_template("info.html", sv=sv)
 

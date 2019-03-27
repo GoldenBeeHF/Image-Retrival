@@ -14,7 +14,10 @@ def readXML():
     
     for i in range(len(svs) - 1):
         sinhvien = SinhVien()
-        sinhvien.setSTT(svs[i].getElementsByTagName("STT")[0].firstChild.data)
+        stt = svs[i].getElementsByTagName("STT")[0].firstChild.data
+        if(i > 310):
+            stt = int(stt) + 310
+        sinhvien.setSTT(stt)
         sinhvien.setMaHSSV(svs[i].getElementsByTagName("MaHSSV")[0].firstChild.data)
         sinhvien.setHoDem(svs[i].getElementsByTagName("HoDem")[0].firstChild.data )
         sinhvien.setTen(svs[i].getElementsByTagName("Ten")[0].firstChild.data)
@@ -37,7 +40,7 @@ def readXML():
             sinhvien.setEmail(svs[i].getElementsByTagName("Email")[0].firstChild.data)
         except:
             sinhvien.setEmail("Not Found")
+        sinhvien.setImg(str(sinhvien.getSTT()) + ".jpg")
         sinhviens.append(sinhvien)
-    print sinhviens
     return sinhviens 
 

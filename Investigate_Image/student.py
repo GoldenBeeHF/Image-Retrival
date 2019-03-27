@@ -36,7 +36,7 @@ class SinhVien:
 	DienThoai       = "0974112161"
 	Email           = "daulaudoan@gmail.com"
 	TrangThai       = "Capit\xe1n\n"
-	Img             = " "
+	Img             = "sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"
     
 	#method
 	def setSTT(self, STT):

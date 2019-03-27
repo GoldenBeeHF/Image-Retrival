@@ -34,7 +34,7 @@ def findMaxDistance(lstVector):
 # lstVector: danh sách các vector
 # idVector: id sẽ được đặt cho vector trung bình vừa tạo
 def computeAvgVector(lstVector, idVector=None):
-    n = 5
+    n = 42
     avgVector = []
     for i in range(0, n):
         avgVector.append(0)
