@@ -136,7 +136,14 @@ def findTop100(image):
 							lstImg[j] = tImg
 				print lstImg
 				return lstImg
-
+class HOG:
+    def __init__(self, vector, idImage):
+        self.__vector = vector # private attribute
+        self.__id = idImage # private attribute
+    def getId(self):
+        return self.__id
+    def getVector(self):
+        return self.__vector
 class Vector:
     def __init__(self, vector, link):
         self.__vector = vector # private attribute
@@ -184,7 +191,6 @@ def findImageInTree(image):
 			height, width = crop_img.shape[:2]
 
 			scaleW = 150. / width
-			print scaleW
 			scaleH = height * scaleW
 
 			try:
@@ -259,19 +265,38 @@ def findImageInTree(image):
 						lstVector.append(vec)
 				dirMin = findMinDistance(vector, lstVector)
 				link = lstVector[dirMin].getLink()
-				print link
 				tempFile = open("tree/" + str(link) + ".txt")
 				model = tempFile.readline()
 
 				if model.__contains__('Leaf'):
 					isFirstLine = True
+					lstV = []
 					with open("tree/" + str(link) + ".txt") as f:
 						for line in f:
 							if isFirstLine == True:
 								isFirstLine = False
 								continue
 							temp = line.split()
-							print temp[0]
-							lstImage.append(temp[0])
-					print lstImage
+							
+							tempVector = []
+							for value in range(1, len(temp)):
+								tempVector.append(temp[value])
+							q = HOG(tempVector, temp[0])
+							lstV.append(q)
+						lstDistance = []
+						for i in range(0, len(lstV)):
+							lstDistance.append(computeDistanceEuclide(lstV[i].getVector(), vector))
+						print lstDistance
+						for i in range(0, len(lstDistance) - 1):
+							for j in range(i + 1, len(lstDistance)):
+								if lstDistance[i] > lstDistance[j]:
+									tDis = lstDistance[i]
+									lstDistance[i] = lstDistance[j]
+									lstDistance[j] = tDis
+									tV = lstV[i]
+									lstV[i] = lstV[j]
+									lstV[j] = tV
+						print lstDistance
+						for hog in lstV:
+							lstImage.append(hog.getId())
 	return lstImage
