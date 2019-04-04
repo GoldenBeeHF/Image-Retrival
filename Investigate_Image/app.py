@@ -45,14 +45,19 @@ def upload():
         upload.save(destination)
         lstImg = findImageInTree(destination)
         image_names = []
+        lstMSSV = []
+        for i in range(0, len(lstImg)):
+            lstMSSV.append(sinhviens[int(lstImg[i])].getMaHSSV())
+        print lstMSSV
         for image in lstImg:
             image_names.append(str(image) + ".jpg")
+        
         amount = len(lstImg)
 
     # return send_from_directory("images", filename, as_attachment=True)
     #return render_template("complete.html", image_name=filename)
     # image_names = os.listdir('./images')
-    return render_template("gallery.html", image_names=image_names, amount=amount)
+    return render_template("gallery.html", image_names=image_names, amount=amount, lstMSSV=lstMSSV)
 
 @app.route('/upload/<filename>')
 def send_image(filename):
