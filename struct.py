@@ -60,7 +60,7 @@ class Node:
 # + lstNode: danh sách các nút không phải lá và root trong cây
 class STree:
     def __init__(self):
-        self.m = 50
+        self.m = 20
         self.countId = 0
         self.root = None
         self.lstLeaf = []
