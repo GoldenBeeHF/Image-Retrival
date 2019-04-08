@@ -10,14 +10,14 @@ from student import SinhVien
 
 from get_face_top_100 import findTop100, findImageInTree
 
+import time
+
 sinhviens = []
 
 sinhviens = readXML()
 
 app = Flask(__name__)
 # app = Flask(__name__, static_folder="images")
-
-
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
@@ -43,7 +43,17 @@ def upload():
         print ("Accept incoming file:", filename)
         print ("Save it to:", destination)
         upload.save(destination)
+
+        start = time.time()
+        lstImg = findTop100(destination)
+        end = time.time()
+        timeLinearSearch = end - start
+
+        start = time.time()
         lstImg = findImageInTree(destination)
+        end = time.time()
+        timeTreeSearch = end - start
+
         image_names = []
         lstMSSV = []
         for i in range(0, len(lstImg)):
@@ -57,7 +67,7 @@ def upload():
     # return send_from_directory("images", filename, as_attachment=True)
     #return render_template("complete.html", image_name=filename)
     # image_names = os.listdir('./images')
-    return render_template("gallery.html", image_names=image_names, amount=amount, lstMSSV=lstMSSV)
+    return render_template("gallery.html", image_names=image_names, amount=amount, lstMSSV=lstMSSV, timeTreeSearch=timeTreeSearch, timeLinearSearch=timeLinearSearch)
 
 @app.route('/upload/<filename>')
 def send_image(filename):

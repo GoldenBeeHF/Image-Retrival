@@ -66,12 +66,12 @@ for i in range(len(arrLocation)):
         crop_img = img[t:t+h,l:l+w]
         height, width = crop_img.shape[:2]
 
-        scaleW = 250. / width
+        scaleW = 150. / width
         print scaleW
         scaleH = height * scaleW
 
         try:
-            crop_img = cv2.resize(crop_img, (250, int(scaleH)), interpolation = cv2.INTER_AREA)
+            crop_img = cv2.resize(crop_img, (150, int(scaleH)), interpolation = cv2.INTER_AREA)
         except:
             continue      
         

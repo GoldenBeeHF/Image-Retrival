@@ -1,4 +1,4 @@
-# This Python file uses the following encoding: utf-8
+﻿# This Python file uses the following encoding: utf-8
 # Cấu trúc của cây STree
 # Các class cần thiết trong đề tài
 import math
@@ -99,14 +99,26 @@ class STree:
             count = 1
             tNode = self.lstLeaf[int(vt)]
             # tính toán lại vector trung bình
-            while True:
-                node = function.findNodeById(lstLink[len(lstLink) - count], self.lstNode, self.lstLeaf, self.root)
-                print node.id
-                node.lstVector[int(lstVtLink[len(lstVtLink) - count])].setVector(function.computeAvgVector(tNode.lstImage))
+            node = function.findNodeById(lstLink[len(lstLink) - count], self.lstNode, self.lstLeaf, self.root)
+            node.lstVector[int(lstVtLink[len(lstVtLink) - count])].setVector(function.computeAvgVector(tNode.lstImage))
+            if (node != self.root):
                 count = count + 1
-                if node == self.root:
-                    break
-                node = tNode
+                tNode = node
+                while True:
+                    node = function.findNodeById(lstLink[len(lstLink) - count], self.lstNode, self.lstLeaf, self.root)
+                    node.lstVector[int(lstVtLink[len(lstVtLink) - count])].setVector(function.computeAvgVector(tNode.lstVector))
+                    count = count + 1
+                    if node == self.root:
+                        break
+                    tNode = node
+
+            # while True:
+            #     node = function.findNodeById(lstLink[len(lstLink) - count], self.lstNode, self.lstLeaf, self.root)
+            #     node.lstVector[int(lstVtLink[len(lstVtLink) - count])].setVector(function.computeAvgVector(tNode.lstImage))
+            #     count = count + 1
+            #     if node == self.root:
+            #         break
+            #     node = tNode
 
             # kiểm tra số lượng phần tử sau khi thêm hình để tách lá
             if self.lstLeaf[int(vt)].n == self.m:
@@ -126,6 +138,7 @@ class STree:
                             if temp == self.root:
                                 return
                             c = 2
+
                             while True:
                                 tempNode = function.findNodeById(lstLink[i + c], self.lstNode, self.lstLeaf, self.root)
                                 tempNode.lstVector[int(lstVtLink[i + c])].setVector(function.computeAvgVector(temp.lstVector))
@@ -207,14 +220,14 @@ class STree:
         # Tìm 2 vector có khoảng cách lớn nhất tạo thành 2 cụm
         cluster = function.findMaxDistance(node.lstVector)
         clusterA = Node(self.countId)
-        self.countId = self.countId + 1
+        # self.countId = self.countId + 1
         clusterA.add(cluster[0])
         clusterB = Node(self.countId)
         self.countId = self.countId + 1
         clusterB.add(cluster[1])
-        self.lstNode.append(clusterA)
-        self.lstNode.append(clusterB)
-        self.lstNode.remove(node)
+        # self.lstNode.append(clusterA)
+        # self.lstNode.append(clusterB)
+        # self.lstNode.remove(node)
 
         # Đưa các vector vào 2 cụm vừa tạo
         for v in node.lstVector:
@@ -229,12 +242,19 @@ class STree:
             else:
                 clusterB.add(v)
         
+        node.lstVector = []
+        node.lstVector = clusterA.lstVector
+        node.n = clusterA.n
+
+        self.lstNode.append(clusterB)
+        
         # thay thế vector ở nút link tới bằng 2 vector khác dựa vào 2 cụm vừa tạo
         node = function.findNodeById(nodeLink, self.lstNode, self.lstLeaf, self.root)
-        node.lstVector.remove(node.lstVector[vtNodeLink])
-        node.add(function.computeAvgVector(clusterA.lstVector, clusterA.id))
+        node.lstVector[vtNodeLink].setVector(function.computeAvgVector(clusterA.lstVector))
+        # node.lstVector.remove(node.lstVector[vtNodeLink])
+        # node.add(function.computeAvgVector(clusterA.lstVector, clusterA.id))
         node.add(function.computeAvgVector(clusterB.lstVector, clusterB.id))
-        node.n = node.n - 1
+        # node.n = node.n - 1
         return node
 
     # Cắt nút Leaf
@@ -242,13 +262,13 @@ class STree:
         # Tìm 2 vector có khoảng cách lớn nhất tạo thành 2 cụm
         cluster = function.findMaxDistance(leaf.lstImage)
         clusterA = Leaf(self.countId)
-        self.countId = self.countId + 1
+        # self.countId = self.countId + 1
         clusterA.add(cluster[0])
         clusterB = Leaf(self.countId)
         self.countId = self.countId + 1
         clusterB.add(cluster[1])
-        self.lstLeaf.append(clusterA)
-        self.lstLeaf.append(clusterB)
+        # self.lstLeaf.append(clusterA)
+        # self.lstLeaf.append(clusterB)
 
         # Đưa các vector vào 2 cụm vừa tạo
         for hog in leaf.lstImage:
@@ -262,25 +282,31 @@ class STree:
                 clusterA.add(hog)
             else:
                 clusterB.add(hog)
+        
+        leaf.lstImage = []
+        leaf.lstImage = clusterA.lstImage
+        leaf.n = clusterA.n
+
+        self.lstLeaf.append(clusterB)
 
         # thay thế vector ở nút link tới bằng 2 vector khác dựa vào 2 cụm vừa tạo
         count = 1
         node = function.findNodeById(lstLink[len(lstLink) - count], self.lstNode, self.lstLeaf, self.root)
-        node.lstVector.remove(node.lstVector[int(lstVtLink[len(lstVtLink) - count])])
-        node.add(function.computeAvgVector(clusterA.lstImage, clusterA.id))
+        node.lstVector[int(lstVtLink[len(lstVtLink) - count])].setVector(function.computeAvgVector(clusterA.lstImage))
+        # node.lstVector.remove(node.lstVector[int(lstVtLink[len(lstVtLink) - count])])
+        # node.add(function.computeAvgVector(clusterA.lstImage, clusterA.id))
         node.add(function.computeAvgVector(clusterB.lstImage, clusterB.id))
         
-        node.n = node.n - 1
-        self.lstLeaf.remove(leaf) # Xóa nút lá cũ
+        # node.n = node.n - 1
+        # self.lstLeaf.remove(leaf) # Xóa nút lá cũ
         if node == self.root:
             return
-
         count = count + 1
         # tính toán lại vector trung bình
         while True:
             tempNode = function.findNodeById(lstLink[len(lstLink) - count], self.lstNode, self.lstLeaf, self.root)
             tempNode.lstVector[int(lstVtLink[len(lstVtLink) - count])].setVector(function.computeAvgVector(node.lstVector))
-            count = count + 1
             if tempNode == self.root:
                 break
+            count = count + 1            
             node = tempNode
