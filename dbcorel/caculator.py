@@ -1,7 +1,6 @@
 import cv2
 from pixel import Pixel 
 image = cv2.imread("img.jpg")
-pixel= image[182, 274]
 p = image.shape
 
 rows,cols, chanels = image.shape
@@ -11,6 +10,11 @@ for i in range(rows):
     for j in range(cols):
         listPixel.append(image[i,j])
         
+
+arrVector = []
+
+for i in range(25):
+        arrVector.append(0)
 
 listPixelColor = []
 
@@ -42,14 +46,15 @@ listPixelColor.append(Pixel([255, 255, 255])) #White
 
 for j in range(len(listPixel)):
     listPixelColor.__getitem__(0).distanceEuclide(listPixel[j])
-    min = listPixelColor.__getitem__(0).getRatio()
-    tempPixel = listPixelColor.__getitem__(0).getColor()
+    min   = listPixelColor.__getitem__(0).getRatio()
+    index = 0
     for i in range(len(listPixelColor)):
         listPixelColor.__getitem__(i).distanceEuclide(listPixel[j])
         if(min > listPixelColor.__getitem__(i).getRatio()):
-            min = listPixelColor.__getitem__(i).getRatio()
-            tempPixel = listPixelColor.__getitem__(i).getColor()
-    listPixel[j] = tempPixel
+            min   = listPixelColor.__getitem__(i).getRatio()
+            index = i
+    arrVector[index] += 1    
 
-for j in range(len(listPixel)):
-    print listPixel[j]
+for i in range(len(arrVector)):
+        if (arrVector[i] != 0) : arrVector[i] = float(arrVector[i]) / (cols * rows)
+
