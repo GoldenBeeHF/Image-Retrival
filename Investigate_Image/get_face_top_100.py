@@ -268,35 +268,57 @@ def findImageInTree(image):
 				tempFile = open("tree/" + str(link) + ".txt")
 				model = tempFile.readline()
 
-				if model.__contains__('Leaf'):
-					isFirstLine = True
+				while True:
 					lstV = []
-					with open("tree/" + str(link) + ".txt") as f:
-						for line in f:
-							if isFirstLine == True:
-								isFirstLine = False
-								continue
-							temp = line.split()
-							
-							tempVector = []
-							for value in range(1, len(temp)):
-								tempVector.append(temp[value])
-							q = HOG(tempVector, temp[0])
-							lstV.append(q)
-						lstDistance = []
-						for i in range(0, len(lstV)):
-							lstDistance.append(computeDistanceEuclide(lstV[i].getVector(), vector))
-						print lstDistance
-						for i in range(0, len(lstDistance) - 1):
-							for j in range(i + 1, len(lstDistance)):
-								if lstDistance[i] > lstDistance[j]:
-									tDis = lstDistance[i]
-									lstDistance[i] = lstDistance[j]
-									lstDistance[j] = tDis
-									tV = lstV[i]
-									lstV[i] = lstV[j]
-									lstV[j] = tV
-						print lstDistance
-						for hog in lstV:
-							lstImage.append(hog.getId())
+					if model.__contains__('Node'):
+						isFirstLine = True
+						with open('tree/' + str(link) + '.txt') as f:
+							for line in f:
+								if isFirstLine == True:
+									isFirstLine = False
+									continue
+								temp = line.split()
+
+								tempVector = []
+								for value in range(1, len(temp)):
+									tempVector.append(temp[value])
+								q = Vector(tempVector, temp[0])
+								lstV.append(q)
+							dirMin = findMinDistance(vector, lstV)
+							link = lstV[dirMin].getLink()
+							tempFile = open('tree/' + str(link) + '.txt')
+							model = tempFile.readline()
+
+					if model.__contains__('Leaf'):
+						isFirstLine = True
+						lstV = []
+						with open("tree/" + str(link) + ".txt") as f:
+							for line in f:
+								if isFirstLine == True:
+									isFirstLine = False
+									continue
+								temp = line.split()
+								
+								tempVector = []
+								for value in range(1, len(temp)):
+									tempVector.append(temp[value])
+								q = HOG(tempVector, temp[0])
+								lstV.append(q)
+							lstDistance = []
+							for i in range(0, len(lstV)):
+								lstDistance.append(computeDistanceEuclide(lstV[i].getVector(), vector))
+							print lstDistance
+							for i in range(0, len(lstDistance) - 1):
+								for j in range(i + 1, len(lstDistance)):
+									if lstDistance[i] > lstDistance[j]:
+										tDis = lstDistance[i]
+										lstDistance[i] = lstDistance[j]
+										lstDistance[j] = tDis
+										tV = lstV[i]
+										lstV[i] = lstV[j]
+										lstV[j] = tV
+							print lstDistance
+							for hog in lstV:
+								lstImage.append(hog.getId())
+						break
 	return lstImage
