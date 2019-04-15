@@ -1,5 +1,5 @@
 import cv2
-from pixel import Pixel 
+from pixel import Pixel
 image = cv2.imread("img.jpg")
 p = image.shape
 
