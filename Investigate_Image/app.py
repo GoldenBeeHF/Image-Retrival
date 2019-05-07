@@ -12,6 +12,10 @@ from get_face_top_100 import findTop100, findImageInTree
 
 import time
 
+import requests
+
+import json
+
 sinhviens = []
 
 sinhviens = readXML()
@@ -23,6 +27,13 @@ APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 @app.route("/")
 def index():
+    json = {
+    	'url':'F:/KhoaLuan/DBCOREL/DBCOREL/beach/107.jpg'
+    }
+    r = requests.post('http://10.1.10.186:8080/vector', json=json)
+    print r.json()["listvector"][0]
+    # arr = json.loads(r.text)
+    # print arr
     return render_template("upload.html")
 
 @app.route("/upload", methods=["POST"])
