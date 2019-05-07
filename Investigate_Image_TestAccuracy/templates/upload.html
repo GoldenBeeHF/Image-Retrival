@@ -3,6 +3,7 @@
 <head>
 <title>Upload</title>
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
 </head>
 <body>
 
@@ -10,7 +11,7 @@
     <strong>Files:</strong><br>
     <input id="file-picker" type="file" name="file" accept="image/*" multiple>
     <div id="msg"></div>
-    <input type="submit" value="Upload!" id="upload-button">
+    <input class = "btn-primary" type="submit" value="Upload!" id="upload-button">
 </form>
 </body>
 <script>
